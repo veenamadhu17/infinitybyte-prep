@@ -1,0 +1,3 @@
+payment_id,payer_name,payment_amount,invoice_id,customer,rule,confidence
+PAY-5002,Globex Ind.,2750.50,INV-1002,Globex Industries,fuzzy_match,0.75
+PAY-5003,Initech B.V.,890.00,INV-1003,Initech BV,fuzzy_match,0.778

@@ -1,0 +1,7 @@
+payment_id,payer_name,payment_amount,invoice_id,customer,rule,confidence
+PAY-5001,Acme Corp,1500.00,INV-1001,Acme Corp,reference_match,1.0
+PAY-5004,STARK INDUSTRIES LTD,12500.00,INV-1004,Stark Industries,reference_match,1.0
+PAY-5006,Umbrella Corporation,675.25,INV-1006,Umbrella Corp,exact_amount_name,0.95
+PAY-5007,Cyberdyne,4800.00,INV-1007,Cyberdyne Systems,reference_match,1.0
+PAY-5009,Tyrell Corp,15000.00,INV-1009,Tyrell Corporation,reference_match,1.0
+PAY-5010,Soylent,425.00,INV-1010,Soylent Industries,exact_amount_name,0.95
