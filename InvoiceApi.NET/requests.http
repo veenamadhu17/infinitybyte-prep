@@ -1,0 +1,83 @@
+@base = http://localhost:5251
+@key  = dev-key-change-me
+
+### Health (no auth)
+GET {{base}}/health
+
+### Create invoice - expected 201
+POST {{base}}/invoices
+Content-Type: application/json
+X-API-Key: {{key}}
+
+{
+  "invoiceId": "INV-1001",
+  "customer":  "Acme Corp",
+  "amount":    1500.00,
+  "dueDate":   "2026-04-01"
+}
+
+### Fetch one - expected 200
+GET {{base}}/invoices/INV-1001
+X-API-Key: {{key}}
+
+### Wrong API key — expected 401
+GET {{base}}/invoices
+X-API-Key: wrong-key
+
+### Bad request — expected 400
+POST {{base}}/invoices
+Content-Type: application/json
+X-API-Key: {{key}}
+
+### Create another (different customer for fuzzy testing)
+POST {{base}}/invoices
+Content-Type: application/json
+X-API-Key: {{key}}
+
+{
+  "invoiceId": "INV-1002",
+  "customer":  "Globex Industries",
+  "amount":    2750.50,
+  "dueDate":   "2026-04-05"
+}
+
+### Reference match — should auto-close INV-1001
+POST {{base}}/payments
+Content-Type: application/json
+X-API-Key: {{key}}
+
+{
+  "paymentId":   "PAY-5001",
+  "payerName":   "Acme Corp",
+  "amount":      1500.00,
+  "reference":   "INV-1001",
+  "paymentDate": "2026-04-02"
+}
+
+### Fuzzy match — "Globex Ind." vs "Globex Industries", invoice stays OPEN
+POST {{base}}/payments
+Content-Type: application/json
+X-API-Key: {{key}}
+
+{
+  "paymentId":   "PAY-5002",
+  "payerName":   "Globex Ind.",
+  "amount":      2750.50,
+  "reference":   "Payment for April",
+  "paymentDate": "2026-04-06"
+}
+
+### Unmatchable — match field will be null
+POST {{base}}/payments
+Content-Type: application/json
+X-API-Key: {{key}}
+
+{
+  "paymentId":   "PAY-5099",
+  "payerName":   "Mystery Payer",
+  "amount":      9999.99,
+  "reference":   "",
+  "paymentDate": "2026-04-30"
+}
+
+
