@@ -15,8 +15,8 @@ app.get('/health', (req, res) => {
 });
 
 // OpenAPI docs
-// const openapiSpec = YAML.load('openapi.yaml');
-// app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+const openapiSpec = YAML.load('./openapi.yaml');
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 // endpoints requiring a key
 app.use('/invoices', requireApiKey, invoicesRouter);
