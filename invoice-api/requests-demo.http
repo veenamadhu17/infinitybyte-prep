@@ -1,0 +1,60 @@
+### 1 — Create invoice INV-1001
+POST http://localhost:3000/invoices
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "invoice_id": "INV-1001",
+    "customer": "Acme Corp",
+    "amount": 1500.00,
+    "due_date": "2026-04-01"
+}
+
+### 2 — Create invoice INV-1002
+POST http://localhost:3000/invoices
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "invoice_id": "INV-1002",
+    "customer": "Globex Industries",
+    "amount": 2750.50,
+    "due_date": "2026-04-05"
+}
+
+### 3 — Get all invoices
+GET http://localhost:3000/invoices
+x-api-key: dev-key-change-me
+
+### 4 — Reference match: clean win, invoice auto-closes
+POST http://localhost:3000/payments
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "payment_id": "PAY-5001",
+    "payer_name": "Acme Corp",
+    "amount": 1500.00,
+    "reference": "INV-1001",
+    "payment_date": "2026-04-02"
+}
+
+### 5 — Get all invoices
+GET http://localhost:3000/invoices
+x-api-key: dev-key-change-me
+
+### 6 — Fuzzy match: requires_review true, invoice stays open
+POST http://localhost:3000/payments
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "payment_id": "PAY-5002",
+    "payer_name": "Globex Indd.",
+    "amount": 2750.50,
+    "payment_date": "2026-04-06"
+}
+
+### 7 — Get all invoices
+GET http://localhost:3000/invoices
+x-api-key: dev-key-change-me
