@@ -25,3 +25,64 @@ x-api-key: dev-key-change-me
 {
     "customer": "Acme Corp"
 }
+
+### 5 — Setup: invoice for reference match test
+POST http://localhost:3000/invoices
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "invoice_id": "INV-REF-001",
+    "customer": "Stark Industries",
+    "amount": 2000.00,
+    "due_date": "2026-06-30"
+}
+
+### 6 — Setup: invoice for fuzzy match test
+POST http://localhost:3000/invoices
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "invoice_id": "INV-FUZ-001",
+    "customer": "Globex International",
+    "amount": 850.00,
+    "due_date": "2026-06-30"
+}
+
+### 7 — Reference match: clean win, invoice auto-closes
+POST http://localhost:3000/payments
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "payment_id": "PAY-001",
+    "payer_name": "Tony Stark",
+    "amount": 2000.00,
+    "reference": "INV-REF-001",
+    "payment_date": "2026-04-27"
+}
+
+### 8 — Fuzzy match: requires_review true, invoice stays open
+POST http://localhost:3000/payments
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "payment_id": "PAY-002",
+    "payer_name": "Globex Internationnal",
+    "amount": 850.00,
+    "payment_date": "2026-04-27"
+}
+
+### 9 — Unmatched: match is null
+POST http://localhost:3000/payments
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "payment_id": "PAY-003",
+    "payer_name": "Nobody Corp",
+    "amount": 1.00,
+    "payment_date": "2026-04-27"
+}

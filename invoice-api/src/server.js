@@ -4,6 +4,7 @@ import YAML from 'yamljs';
 
 import { requireApiKey } from './auth.js';
 import invoicesRouter from './invoices.js';
+import paymentsRouter from './payments.js';
 
 const app = express();
 app.use(express.json())
@@ -19,6 +20,7 @@ app.get('/health', (req, res) => {
 
 // endpoints requiring a key
 app.use('/invoices', requireApiKey, invoicesRouter);
+app.use('/payments', requireApiKey, paymentsRouter);
 
 // Last resort error handler
 app.use((err, _req, res, _next) => {
