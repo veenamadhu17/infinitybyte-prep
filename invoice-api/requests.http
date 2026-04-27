@@ -1,0 +1,27 @@
+### 1 — Create an invoice
+POST http://localhost:3000/invoices
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "invoice_id": "INV-001",
+    "customer": "Acme Corp",
+    "amount": 1500.00,
+    "due_date": "2026-05-31"
+}
+
+### 2 — Fetch it back
+GET http://localhost:3000/invoices/INV-001/status
+x-api-key: dev-key-change-me
+
+### 3 — Try without an API key (expect 401)
+GET http://localhost:3000/invoices/INV-001/status
+
+### 4 — Try with bad data (expect 400)
+POST http://localhost:3000/invoices
+Content-Type: application/json
+x-api-key: dev-key-change-me
+
+{
+    "customer": "Acme Corp"
+}

@@ -2,6 +2,8 @@ import Database from 'better-sqlite3';
 
 const db = new Database('invoices.db');
 
+db.pragma("journal_mode = WAL");
+
 db.exec(`
     CREATE TABLE IF NOT EXISTS invoices (
         invoice_id TEXT PRIMARY KEY,
