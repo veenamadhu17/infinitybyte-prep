@@ -1,6 +1,8 @@
 notes/
 invoice-api/node_modules/
 invoice-api/.env
+cash-allocator-ui/node_modules/
+cash-allocator-ui/dist/
 
 invoice-api/invoices.db
 invoice-api/invoices.db-shm
