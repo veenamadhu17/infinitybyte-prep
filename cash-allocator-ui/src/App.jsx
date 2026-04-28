@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import InvoicesPage from './pages/InvoicesPage'
+import { ReviewChip } from './components/Primitives';
+import ReviewPage from './pages/ReviewPage';
 
 const TABS = [
-  { id: "invoices", label: "Invoices" }
+  { id: "invoices", label: "Invoices" },
+  { id: "review", label: "Needs review" },
 ];
 
 export default function App() {
@@ -40,7 +43,9 @@ export default function App() {
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         {tab == "invoices" && <InvoicesPage />}
+        {tab == "review" && <ReviewPage />}
       </main>
+
       <footer className="max-w-6xl mx-auto px-6 py-6 border-t border-hair mt-12 text-xs text-graphite">
         Internal AR reconciliation tooling. Built as a learning project.
       </footer>
