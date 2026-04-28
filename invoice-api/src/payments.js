@@ -75,4 +75,22 @@ router.get('/', (req, res) => {
     res.json({ items: rows });
 });
 
+// POST - rejects a fuzzy match
+router.post('/:id/unmatch', (req, res) => {
+    const result = db.prepare(`
+        UPDATE payments
+        SET matched_invoice_id = NULL,
+            match_rule         = NULL,
+            confidence         = NULL
+        WHERE payment_id = ?
+    `).run(req.params.id);
+
+    if (result.changes === 0) {
+        return res.status(404).json({ error: "not_found" });
+    }
+
+    const updated = db.prepare('SELECT * FROM payments WHERE payment_id = ?').get(req.params.id);
+    res.json(updated);
+});
+
 export default router;
