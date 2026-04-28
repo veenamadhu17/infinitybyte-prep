@@ -61,7 +61,7 @@ router.get("/", (req, res) => {
 });
 
 // GET - get invoice by id
-router.get('/:id/status', (req, res) => {
+router.get('/:id', (req, res) => {
     const row = db.prepare('SELECT * FROM invoices WHERE invoice_id = ?').get(req.params.id);
     if (!row) {
         return res.status(404).json({ error: 'not_found' });
