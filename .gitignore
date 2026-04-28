@@ -5,3 +5,23 @@ invoice-api/.env
 invoice-api/invoices.db
 invoice-api/invoices.db-shm
 invoice-api/invoices.db-wal
+
+InvoiceApi.NET/invoices.db
+InvoiceApi.NET/invoices.db-shm
+InvoiceApi.NET/invoices.db-wal
+
+# .NET build output
+bin/
+obj/
+
+# .NET solution user files
+*.user
+*.suo
+.vs/
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# dotnet publish
+publish/
