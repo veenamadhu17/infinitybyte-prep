@@ -45,7 +45,7 @@ router.get("/", (req, res) => {
     }
     if (customer) {
         conditions.push('customer LIKE @customer');
-        params.customer = `%${customer}`;
+        params.customer = `%${customer}%`;
     }
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
