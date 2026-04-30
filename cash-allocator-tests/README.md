@@ -67,7 +67,7 @@ like `INV-1730384029-451`. This sidesteps the lack of a DELETE endpoint
 on the API and means tests can run against any state the DB happens
 to be in.
 
-## Limitations (intentional)
+## Limitations
 
 - **No cross-browser run by default.** Chromium only. Firefox and WebKit
   projects are scaffolded but commented out — uncomment for a CI matrix.
@@ -77,6 +77,7 @@ to be in.
   key via env var.
 - **No accessibility tests yet.** Adding `@axe-core/playwright` would be
   a small, high-value next step.
+- **No separate Database for testing.** When running the tests, it creates cases using the existing database instead of creating one specifically for testing. Need to ensure there is no database or that it is empty before running tests.
 
 ## Possible next steps
 

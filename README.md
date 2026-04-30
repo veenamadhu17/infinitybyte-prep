@@ -20,10 +20,12 @@ Payments that don't meet any threshold are left unmatched for investigation.
 
 ```
 infinitybyte-prep/
-├── cash-allocator/        # Python prototype — core matching algorithm, CSV in/out
-├── invoice-api/           # Node.js + Express REST API with SQLite
-├── cash-allocator-ui/     # React + Vite frontend for finance clerks
-└── InvoiceApi.NET/        # ASP.NET Core port of invoice-api
+├── cash-allocator/          # Python prototype — core matching algorithm, CSV in/out
+├── invoice-api/             # Node.js + Express REST API with SQLite
+├── cash-allocator-ui/       # React + Vite frontend for finance clerks
+├── InvoiceApi.NET/          # ASP.NET Core port of invoice-api
+├── cash_allocator_mobile/   # Flutter mobile app — connects to the ASP.NET Core API
+└── cash-allocator-tests/    # Playwright end-to-end tests for the React UI + Node API
 ```
 
 ### cash-allocator (Python)
@@ -100,6 +102,32 @@ See [cash-allocator-ui/README.md](cash-allocator-ui/README.md) for UI design dec
 
 ---
 
+### cash-allocator-tests (Playwright)
+
+End-to-end UI regression suite for the React app + Node API. Tests run against the real stack — no mocks — so integration bugs can't hide behind faked responses.
+
+**Stack**: Playwright · Node.js · Page Object Model
+
+```bash
+cd cash-allocator-tests
+npm install
+npx playwright install   # one-time browser binary download (~300 MB)
+npm test                 # headless run
+```
+
+`playwright.config.js` auto-starts both the API and the UI before running, so no manual setup is needed.
+
+| Suite | Covers |
+|-------|--------|
+| `smoke.spec.js` | App loads, both tabs visible, tab switching |
+| `invoices.spec.js` | Invoice list, status filter, customer search |
+| `automatch.spec.js` | High-confidence matches auto-close without review |
+| `review.spec.js` | Fuzzy matches surface in inbox; confirm/reject workflows |
+
+See [cash-allocator-tests/README.md](cash-allocator-tests/README.md) for design decisions and additional run modes.
+
+---
+
 ### InvoiceApi.NET (ASP.NET Core)
 
 Port of `invoice-api` to .NET. Identical endpoints and matching algorithm; differences are idiomatic to the stack.
@@ -111,7 +139,7 @@ cd InvoiceApi.NET
 dotnet run
 ```
 
-Swagger UI at `http://localhost:5000/swagger`. API key configured in `appsettings.json`.
+Swagger UI at `http://localhost:5251/swagger`. API key configured in `appsettings.json`.
 
 **Notable difference vs Node version**: uses `decimal` instead of JavaScript's `number` for all monetary values — exact arithmetic, no floating-point rounding errors. Matters in production fintech.
 
@@ -119,18 +147,44 @@ See [InvoiceApi.NET/README.md](InvoiceApi.NET/README.md) for the full Node → .
 
 ---
 
+### cash_allocator_mobile (Flutter)
+
+Flutter companion app that connects to the **ASP.NET Core API** (`http://localhost:5251`). Same two screens as the React UI — invoices and the review queue — proving the API contract holds across clients.
+
+**Stack**: Flutter · Dart · `http` package · `FutureBuilder` for async state
+
+```bash
+# Terminal 1 — API
+cd InvoiceApi.NET && dotnet run
+
+# Terminal 2 — Flutter app (runs in Chrome)
+cd cash_allocator_mobile && flutter pub get && flutter run -d chrome
+```
+
+**Two screens**:
+- **Invoices** — list with status filter and customer search
+- **Needs Review** — fuzzy matches awaiting confirmation or rejection
+
+The app targets the .NET backend but is portable to the Node API — only two constants change (port and JSON casing). Visual language matches the React UI: same off-white background, amber accent, and tabular-figure money columns.
+
+See [cash_allocator_mobile/README.md](cash_allocator_mobile/README.md) for design decisions and differences from the React frontend.
+
+---
+
 ## Cross-stack comparison
 
-| Concern | Python | Node.js | .NET |
-|---------|--------|---------|------|
-| Web framework | — | Express 5 | ASP.NET Core minimal APIs |
-| Database | CSV | SQLite (raw SQL) | SQLite (EF Core) |
-| Validation | — | Zod | FluentValidation |
-| API docs | — | Hand-written OpenAPI YAML | Auto-generated Swashbuckle |
-| Money type | `float` | `number` (lossy) | `decimal` (exact) |
-| Matching logic | `allocator.py` | `matcher.js` | `MatcherService.cs` |
+| Concern | Python | Node.js | .NET | Flutter |
+|---------|--------|---------|------|---------|
+| Role | Batch processor | REST API | REST API | Mobile/web client |
+| Web framework | — | Express 5 | ASP.NET Core minimal APIs | Flutter |
+| Database | CSV | SQLite (raw SQL) | SQLite (EF Core) | — (API consumer) |
+| Validation | — | Zod | FluentValidation | — |
+| API docs | — | Hand-written OpenAPI YAML | Auto-generated Swashbuckle | — |
+| Money type | `float` | `number` (lossy) | `decimal` (exact) | `double` (display only) |
+| Matching logic | `allocator.py` | `matcher.js` | `MatcherService.cs` | — (server-side) |
+| Async model | — | Promises / `async-await` | `async/await` | `FutureBuilder` |
 
-The matching algorithm is identical across all three — same normalization rules, same suffix list, same LCS-based similarity scoring. The port was intentionally kept line-for-line faithful.
+The matching algorithm is identical across all three backends — same normalization rules, same suffix list, same LCS-based similarity scoring. The port was intentionally kept line-for-line faithful. The Flutter client proves the shared API contract by consuming the .NET backend interchangeably.
 
 ## Known limitations (intentional, scope was kept narrow)
 
