@@ -46,7 +46,19 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+   options.AddDefaultPolicy(policy =>
+   {
+       policy.AllowAnyOrigin()
+             .AllowAnyHeader()
+             .AllowAnyMethod();
+   });
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 // DB creation
 using (var scope = app.Services.CreateScope())

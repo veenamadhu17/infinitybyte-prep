@@ -85,5 +85,21 @@ public static class PaymentEnpoints
                 .ToListAsync();
            return Results.Ok(new { items = rows }); 
         });
+
+        // POST - rejects a matched payment that requires human review
+        group.MapPost("/{id}/unmatch", async (string id, AppDbContext db) =>
+        {
+           var payment = await db.Payments.FindAsync(id);
+           if (payment is null)
+            {
+                return Results.NotFound(new ErrorResponse("not_found", "Payment {id} not found"));
+            } 
+            payment.MatchedInvoiceId = null;
+            payment.MatchRule = null;
+            payment.Confidence = null;
+
+            await db.SaveChangesAsync();
+            return Results.Ok(payment);
+        });
     }
 }
