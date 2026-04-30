@@ -1,8 +1,14 @@
 notes/
+
 invoice-api/node_modules/
 invoice-api/.env
+
 cash-allocator-ui/node_modules/
 cash-allocator-ui/dist/
+
+cash-allocator-tests/node_modules/
+cash-allocator-tests/playwright-report/
+cash-allocator-tests/test-results/
 
 invoice-api/invoices.db
 invoice-api/invoices.db-shm
