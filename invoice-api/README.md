@@ -48,6 +48,7 @@ API_KEY=my-secret-key npm start
 | PATCH  | `/invoices/{id}/status`        | Update status (open / paid / cancelled)  |
 | POST   | `/payments`                    | Record payment + auto-match              |
 | GET    | `/payments`                    | List recent payments                     |
+| POST   | `/payments/{id}/unmatch`       | Clear a fuzzy match, reopen the invoice  |
 | GET    | `/health`                      | Health check (no auth)                   |
 | GET    | `/docs`                        | Swagger UI (no auth)                     |
  
